@@ -1,18 +1,5 @@
 $(document).ready(function () {
-  // ------Row Numbering------
-  // let rows=document.querySelector(".row-number-container");
-  //
-  // let str="";
-  // for(let i=1;i<=100;i++)
-  // {
-  //   str+=`<div class="cell-row" id="${i}">${i}</div>`;
-  // }
-  // rows.innerHTML=str;
-
-  // -------Column Naming----------
-
-  // let cols=document.querySelector(".column-name-container");
-  // str="";
+  
   for (let i = 1; i <= 100; i++) {
     let n = i;
     ans = "";
@@ -36,21 +23,19 @@ $(document).ready(function () {
 
   let str = "";
 
-  // let cellContainer=document.querySelector(".input-cell-container");
+  
   for (let i = 1; i <= 100; i++) {
     let row = $(`<div class="cell-row"></div>`);
-    // str+=`<div class="cell-row">`;
+    
     for (let j = 1; j <= 100; j++) {
       let colCode = $(`.colId-${j}`).attr("id").split("-")[1];
-      // let colCode=document.querySelector(`.colId-${j}`).getAttribute("id").split("-")[1];
-      // str+=`<div class="input-cell" contenteditable="true" id="row-${i}-col-${j}" data="code-${colCode}">${colCode}</div>`;
+      
       let cell = $(`<div class="input-cell" contenteditable="false" id="row-${i}-col-${j}" data="code-${colCode}"></div>`);
       row.append(cell);
     }
     $(".input-cell-container").append(row);
-    // str+=`</div>`
+    
   }
-  // cellContainer.innerHTML=str;
 
 
   $(".align-icon").click(function () {
@@ -118,9 +103,31 @@ $(document).ready(function () {
     else {
       $(".input-cell.selected").removeClass("selected");
       $(this).addClass("selected");
+      updateHeader(this);
     }
 
   });
+
+  function updateHeader(ele){
+
+    let [row,col] = getRowCol(ele);
+    let cellInfo = defaultProperty;
+
+
+    if(cellData[selectedSheet][row] && cellData[selectedSheet][row][col] ){
+      cellInfo=cellData[selectedSheet][row][col];
+
+      !cellInfo["font-weight"]?$(".icon-bold").removeClass("selected"):$(".icon-bold").addClass("selected");
+      !cellInfo["font-style"]?$(".icon-italic").removeClass("selected"):$(".icon-italic").addClass("selected");
+      !cellInfo["text-decoration"]?$(".icon-underline").removeClass("selected"):$(".icon-underline").addClass("selected");
+
+      let alignment=cellInfo["text-align"];
+
+      $(".align-icon").removeClass("selected");
+      $(".align-icon-"+alignment).addClass("selected");
+      
+    }
+  }
 
   $(".input-cell").dblclick(function () {
     $(".input-cell.selected").removeClass("selected");
@@ -149,42 +156,115 @@ function getRowCol(ele) {
 }
 
 
-function updateCell(property,value){
+const defaultProperty={
+  text:"",
+  "color":"black",
+  "background-color":"white",
+  "font-family":"Arial",
+  "font-style":"",
+  "font-weight":"",
+  "font-size":14,
+  "text-decoration":"",
+  "text-align":"left"
+};
+
+let selectedSheet="Sheet1";
+
+let totalSheets=1;
+
+let cellData={
+  "Sheet1":{}
+};
+
+
+function updateCell(property,value,defaultPossible){
   $(".input-cell.selected").each(function(){
     $(this).css(property,value);
-  })
-  
+
+    let [row,col]=getRowCol(this);
+
+    if(cellData[selectedSheet][row]){
+      if(cellData[selectedSheet][row][col]){
+        cellData[selectedSheet][row][col][property]=value;
+      }
+      else{
+        cellData[selectedSheet][row][col]={...defaultProperty};
+        cellData[selectedSheet][row][col][property]=value;
+      }
+    }
+    else{
+      cellData[selectedSheet][row]={};
+      cellData[selectedSheet][row][col]={...defaultProperty};
+      cellData[selectedSheet][row][col][property]=value;
+    }
+
+    if(defaultPossible && JSON.stringify(cellData[selectedSheet][row][col])===JSON.stringify(defaultProperty)){
+      delete cellData[selectedSheet][row][col];
+
+      if(Object.keys(cellData[selectedSheet][row]).length==0){
+        delete cellData[selectedSheet][row];
+      }
+    }
+
+    console.log(cellData);
+
+  });
 }
 
 $(".icon-bold").click(function(){
   if($(this).hasClass("selected")){
-    updateCell("font-weight","");
+    updateCell("font-weight","",true);
   }
   else{
-    updateCell("font-weight","bold");
+    updateCell("font-weight","bold",false);
   }
   
 });
 
 $(".icon-italic").click(function(){
   if($(this).hasClass("selected")){
-    updateCell("font-style","");
+    updateCell("font-style","",true);
   }
   else{
-    updateCell("font-style","italic");
+    updateCell("font-style","italic",false);
   }
   
 });
 
 $(".icon-underline").click(function(){
   if($(this).hasClass("selected")){
-    updateCell("text-decoration","");
+    updateCell("text-decoration","",true);
   }
   else{
-    updateCell("text-decoration","underline");
+    updateCell("text-decoration","underline",false);
   }
   
 });
 
+$(".align-icon-left").click(function(){
+  if($(this).hasClass("selected")){
+    updateCell("text-align","",true);
+  }
+  else{
+    updateCell("text-align","left",false);
+  }
+});
+
+$(".align-icon-center").click(function(){
+  if($(this).hasClass("selected")){
+    updateCell("text-align","",true);
+  }
+  else{
+    updateCell("text-align","center",false);
+  }
+});
 
 
+$(".align-icon-right").click(function(){
+  if($(this).hasClass("selected")){
+    updateCell("text-align","",true);
+  }
+  else{
+    updateCell("text-align","right",false);
+  }
+});

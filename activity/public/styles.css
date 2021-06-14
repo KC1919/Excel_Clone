@@ -70,7 +70,7 @@ body{
 }
 
 .menu-icons:hover{
-  background-color: lightgrey;
+  /* background-color: lightgrey; */
   cursor: pointer;
 }
 
@@ -195,8 +195,6 @@ body{
 .input-cell{
   min-height: 100%;
   min-width: 80px;
-  display: flex;
-  align-items: center;
   border-bottom: 1px solid lightgrey;
   border-right: 1px solid lightgrey;
   overflow-x: auto;
