@@ -1,4 +1,6 @@
 $(document).ready(function () {
+
+  //Calculating cell-column-name
   
   for (let i = 1; i <= 100; i++) {
     let n = i;
@@ -14,26 +16,32 @@ $(document).ready(function () {
         n = Math.floor(n / 26);
       }
     }
-    let column = $(`<div class="column-name colId-${i}" id="colCod-${ans}">${ans}</div>`);
-    $(".column-name-container").append(column);
+    let column = $(`<div class="column-name colId-${i}" id="colCod-${ans}">${ans}</div>`); //making each column head name
+    $(".column-name-container").append(column); //appending it in column-name-container
 
-    let row = $(`<div class="row-number" id="${i}">${i}</div>`);
-    $(".row-number-container").append(row);
+    let row = $(`<div class="row-number" id="${i}">${i}</div>`); //same way, making each row head number
+    $(".row-number-container").append(row);    //appending it in row-number-container
   }
 
-  let str = "";
+  //generating cells, row-wise
 
-  
   for (let i = 1; i <= 100; i++) {
-    let row = $(`<div class="cell-row"></div>`);
+    let row = $(`<div class="cell-row"></div>`); //make a row
     
     for (let j = 1; j <= 100; j++) {
-      let colCode = $(`.colId-${j}`).attr("id").split("-")[1];
+      let colCode = $(`.colId-${j}`).attr("id").split("-")[1];  //getting the column code
       
+      //making the cell, with row and column number, and column code
+
       let cell = $(`<div class="input-cell" contenteditable="false" id="row-${i}-col-${j}" data="code-${colCode}"></div>`);
-      row.append(cell);
+      row.append(cell); //appending the cell in the row
     }
-    $(".input-cell-container").append(row);
+
+    //when all cells are appended in a single row
+
+    $(".input-cell-container").append(row); //we then append the row in the input container cell
+
+    //in this ways the loop runs, and all the rows are added one by one
     
   }
 
